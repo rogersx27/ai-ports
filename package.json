@@ -1,6 +1,6 @@
 {
   "name": "@rogersx27/ai-ports",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Capa de IA agnóstica de proveedor: puertos IAiAssistant/IAiEvaluator, adaptadores (Gemini, Anthropic, OpenAI, Vercel AI Gateway, Jev) y utilidades de timeout y caché.",
   "license": "MIT",
   "type": "module",

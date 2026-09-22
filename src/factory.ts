@@ -6,6 +6,9 @@ export type AiProvider = "gemini" | "anthropic" | "openai" | "gateway";
 
 /** Variables de entorno que leen las fábricas (por defecto, `process.env`). */
 export interface AiEnv {
+  // Sin firma de índice, un entorno con otras variables tipadas (ej. `NODE_ENV` en
+  // Next.js) no se puede asignar: TypeScript lo trata como un "weak type".
+  [name: string]: string | undefined;
   AI_PROVIDER?: string;
   GEMINI_API_KEY?: string;
   GEMINI_MODEL?: string;

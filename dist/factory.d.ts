@@ -3,6 +3,7 @@ import type { IAiEvaluator } from "./ports/IAiEvaluator.ts";
 export type AiProvider = "gemini" | "anthropic" | "openai" | "gateway";
 /** Variables de entorno que leen las fábricas (por defecto, `process.env`). */
 export interface AiEnv {
+    [name: string]: string | undefined;
     AI_PROVIDER?: string;
     GEMINI_API_KEY?: string;
     GEMINI_MODEL?: string;

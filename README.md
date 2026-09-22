@@ -12,7 +12,7 @@ Capa de IA agnóstica de proveedor para proyectos TypeScript, extraída de [srs-
 Se instala como dependencia git, fijando un tag de versión:
 
 ```bash
-pnpm add github:rogersx27/ai-ports#v0.1.0
+pnpm add github:rogersx27/ai-ports#v0.1.1
 ```
 
 El repo incluye `dist/` ya compilado, así que la instalación no ejecuta scripts de build.

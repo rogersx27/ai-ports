@@ -7,6 +7,12 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-09-22
+
+### Fixed
+
+- `AiEnv` acepta entornos tipados con otras variables (ej. `process.env` en Next.js, que declara `NODE_ENV`); antes TypeScript rechazaba pasarlos a `resolveAiProvider` y a las fábricas.
+
 ## [0.1.0] - 2026-09-22
 
 ### Added

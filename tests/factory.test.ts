@@ -40,3 +40,13 @@ test("createAiEvaluator returns Jev only when AI_GATEWAY_API_KEY is set, regardl
   const custom = await createAiEvaluator({ AI_GATEWAY_API_KEY: "k", AI_GATEWAY_EVALUATION_MODEL: "otro/modelo" });
   assert.equal(custom?.modelId, "otro/modelo");
 });
+
+test("the factories accept a typed environment with unrelated variables, like process.env in Next.js", () => {
+  // Así tipa Next.js process.env: NODE_ENV obligatorio, ninguna variable de IA.
+  interface NextLikeEnv {
+    readonly NODE_ENV: "development" | "production" | "test";
+    [key: string]: string | undefined;
+  }
+  const env: NextLikeEnv = { NODE_ENV: "production", GEMINI_API_KEY: "k" };
+  assert.equal(resolveAiProvider(env), "gemini");
+});
