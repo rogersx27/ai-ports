@@ -15,12 +15,7 @@ El repositorio es privado y se instala como dependencia git (necesitas acceso a 
 pnpm add github:rogersx27/ai-ports#v0.1.0
 ```
 
-El paquete se compila al instalarse (script `prepare`). pnpm bloquea por defecto los scripts de dependencias, así que hay que permitirlo en el `pnpm-workspace.yaml` del proyecto consumidor:
-
-```yaml
-allowBuilds:
-  '@rogersx27/ai-ports': true
-```
+El repo incluye `dist/` ya compilado, así que la instalación no ejecuta scripts de build.
 
 Los SDKs de los proveedores son *peer dependencies* opcionales. Instala solo los que uses:
 
@@ -129,8 +124,10 @@ const result = await withCache(cache, projectId, "summary", hashContent({ input,
 pnpm install
 pnpm test        # node --test sobre los .ts, sin transpilar
 pnpm typecheck
-pnpm build       # emite dist/
+pnpm build       # regenera dist/
 ```
+
+`dist/` se versiona: el `dist/` compilado se commitea junto con cada cambio en `src/`, y el CI falla si no coinciden.
 
 El código usa solo sintaxis TypeScript *erasable* (`erasableSyntaxOnly`): nada de `enum` ni *parameter properties*. Así `node --test` lo ejecuta directamente, y los imports relativos llevan extensión `.ts`, que `tsc` reescribe a `.js` al compilar.
 

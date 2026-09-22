@@ -28,3 +28,7 @@ jobs:
       - run: pnpm test
 
       - run: pnpm build
+
+      # dist/ se versiona para que la instalación desde git no tenga que compilar.
+      - name: dist/ está al día con src/
+        run: git diff --exit-code --stat -- dist || (echo "Corre pnpm build y commitea dist/." && exit 1)
