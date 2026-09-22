@@ -1,0 +1,53 @@
+import assert from "node:assert/strict";
+import { test } from "node:test";
+import { withCache } from "../src/utils/cachedCompute.ts";
+import type { AiCacheEntry, IAiCacheRepository } from "../src/ports/IAiCacheRepository.ts";
+
+function fakeCache(initial: Record<string, AiCacheEntry> = {}) {
+  const store = { ...initial };
+  const calls = { get: 0, set: 0 };
+  const cache: IAiCacheRepository = {
+    async get(scope, kind) {
+      calls.get += 1;
+      return store[`${scope}:${kind}`] ?? null;
+    },
+    async set(scope, kind, inputHash, payload) {
+      calls.set += 1;
+      store[`${scope}:${kind}`] = { inputHash, payload };
+    },
+  };
+  return { cache, calls };
+}
+
+test("returns the cached value without calling compute when the input hash matches", async () => {
+  const { cache, calls } = fakeCache({ "p1:kind": { inputHash: "hash-a", payload: JSON.stringify({ text: "cached" }) } });
+  let computeCalled = false;
+  const result = await withCache(cache, "p1", "kind", "hash-a", async () => {
+    computeCalled = true;
+    return { value: { text: "fresh" }, cacheable: true };
+  });
+  assert.deepEqual(result, { text: "cached" });
+  assert.equal(computeCalled, false);
+  assert.equal(calls.set, 0);
+});
+
+test("recomputes and stores when there is no cached entry and the result is cacheable", async () => {
+  const { cache, calls } = fakeCache();
+  const result = await withCache(cache, "p1", "kind", "hash-a", async () => ({ value: { text: "fresh" }, cacheable: true }));
+  assert.deepEqual(result, { text: "fresh" });
+  assert.equal(calls.set, 1);
+});
+
+test("recomputes but does not store when the result reports itself not cacheable", async () => {
+  const { cache, calls } = fakeCache();
+  const result = await withCache(cache, "p1", "kind", "hash-a", async () => ({ value: { text: "degraded" }, cacheable: false }));
+  assert.deepEqual(result, { text: "degraded" });
+  assert.equal(calls.set, 0);
+});
+
+test("treats a stale input hash as a miss and recomputes", async () => {
+  const { cache, calls } = fakeCache({ "p1:kind": { inputHash: "old-hash", payload: JSON.stringify({ text: "stale" }) } });
+  const result = await withCache(cache, "p1", "kind", "new-hash", async () => ({ value: { text: "fresh" }, cacheable: true }));
+  assert.deepEqual(result, { text: "fresh" });
+  assert.equal(calls.set, 1);
+});
